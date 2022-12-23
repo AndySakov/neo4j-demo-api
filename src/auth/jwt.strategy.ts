@@ -6,12 +6,12 @@ import { UserService } from "./user/user.service";
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
-      private readonly configService: ConfigService,
-      private readonly userService: UserService
+        private readonly configService: ConfigService,
+        private readonly userService: UserService
 
     ) {
         super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Token'),
+            jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
             ignoreExpiration: configService.get('JWT_IGNORE_EXPIRATION') == 'true',
             secretOrKey: configService.get('JWT_SECRET'),
         })

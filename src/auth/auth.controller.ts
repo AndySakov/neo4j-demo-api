@@ -18,17 +18,17 @@ export class AuthController {
     ) {}
 
     @Post('register')
-    postRegister(@Body() user: CreateUserDto): Promise<AuthenticatedUser> {
-        return this.userService.create(user)
-            .then(user => ({
-                ...user.toJson(),
-                token: this.authService.createToken(user),
-            } as AuthenticatedUser))
+    async postRegister(@Body() user: CreateUserDto): Promise<AuthenticatedUser> {
+        const user_2 = await this.userService.create(user);
+        return ({
+            ...user_2.toJson(),
+            token: this.authService.createToken(user_2),
+        } as AuthenticatedUser);
     }
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    postLogin(@AuthUser() user): Promise<AuthenticatedUser> {
+    async postLogin(@AuthUser() user): Promise<AuthenticatedUser> {
         return {
             ...user.toJson(),
             token: this.authService.createToken(user),
