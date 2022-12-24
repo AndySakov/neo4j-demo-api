@@ -30,12 +30,8 @@ export class AppModule implements OnModuleInit {
 
   onModuleInit() {
     return Promise.all([
-      this.neo4jService.write('CREATE CONSTRAINT unique_id IF NOT EXISTS FOR (u:User) REQUIRE u.id IS UNIQUE').catch(e => {
-        throw new BadRequestException(e, 'Duplicate user id')
-      }),
-      this.neo4jService.write('CREATE CONSTRAINT unique_email IF NOT EXISTS FOR (u:User) REQUIRE u.email IS UNIQUE').catch(e => {
-        throw new BadRequestException(e, 'Duplicate user email')
-      }),
+      this.neo4jService.write('CREATE CONSTRAINT unique_id IF NOT EXISTS FOR (u:User) REQUIRE u.id IS UNIQUE').catch(e => {}),
+      this.neo4jService.write('CREATE CONSTRAINT unique_email IF NOT EXISTS FOR (u:User) REQUIRE u.email IS UNIQUE').catch(e => {}),
     ])
   }
 }
