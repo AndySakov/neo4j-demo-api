@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Put, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -14,9 +14,12 @@ export class AuthController {
     constructor(
         private readonly userService: UserService,
         private readonly authService: AuthService
-    ) {}
+    ) { }
 
     @Post('register')
+    @UsePipes(new ValidationPipe({
+        whitelist: true
+    }))
     async postRegister(@Body() user: CreateUserDto): Promise<AuthenticatedUser> {
         const user_2 = await this.userService.create(user);
         return ({
@@ -27,6 +30,9 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
+    @UsePipes(new ValidationPipe({
+        whitelist: true
+    }))
     async postLogin(@AuthUser() user): Promise<AuthenticatedUser> {
         return {
             ...user.toJson(),
@@ -35,16 +41,10 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('user')
-    getUser(@AuthUser() user) {
-        return {
-            ...user.toJson(),
-            token: this.authService.createToken(user),
-        }
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Put('user')
+    @Put('update')
+    @UsePipes(new ValidationPipe({
+        whitelist: true
+    }))
     async putUser(@AuthUser() user, @Body() properties: UpdateUserDto): Promise<AuthenticatedUser> {
         const updated = await this.userService.update(user.getId(), properties)
 

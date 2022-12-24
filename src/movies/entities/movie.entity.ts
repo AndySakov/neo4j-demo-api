@@ -7,16 +7,16 @@ export class Movie {
 
   constructor(private readonly node: Node) { }
 
-  @Field({ description: 'UUID of the record', nullable: true })
+  @Field({ description: 'UUID of the record' })
   id: string;
 
   @Field({ description: 'Title of the movie' })
   title: string;
 
-  @Field(() => Int, { description: 'Year of release', nullable: true })
+  @Field(() => Int, { description: 'Year of release' })
   released: number;
 
-  @Field({ description: 'Popular phrase associated with this movie', nullable: true })
+  @Field({ description: 'Popular phrase associated with this movie' })
   tagline: string;
 
   toJson(): MovieProperties {

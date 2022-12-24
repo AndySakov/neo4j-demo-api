@@ -10,7 +10,7 @@ export class MoviesService {
   constructor(private readonly neo4jService: Neo4jService) { }
 
   create(createMovieInput: CreateMovieInput): Promise<MovieProperties> {
-    return this.neo4jService.read(`
+    return this.neo4jService.write(`
             CREATE (m:Movie {id: randomUUID() })
             SET m += $properties
             RETURN m
@@ -45,7 +45,7 @@ export class MoviesService {
   }
 
   remove(id: string): Promise<boolean | undefined> {
-    return this.neo4jService.read(`
+    return this.neo4jService.write(`
             MATCH (m:Movie {id: $id})
             DETACH DELETE m
         `, { id })

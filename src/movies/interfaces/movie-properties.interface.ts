@@ -2,6 +2,6 @@
 export interface MovieProperties {
     id: string
     title: string,
-    released: number | undefined,
+    released: number,
     tagline: string,
 }
