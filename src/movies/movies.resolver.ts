@@ -6,7 +6,7 @@ import { UpdateMovieInput } from './dto/update-movie.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql.auth-guard';
 import { MovieProperties } from './interfaces/movie-properties.interface';
-import { Response } from './entities/response.entity';
+import { Response } from '../common/response.entity';
 
 @Resolver(() => Movie)
 export class MoviesResolver {

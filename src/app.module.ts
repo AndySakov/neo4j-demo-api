@@ -1,4 +1,4 @@
-import { BadRequestException, Module, OnModuleInit } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Neo4jModule, Neo4jService } from 'nest-neo4j/dist';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -7,6 +7,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { MoviesModule } from './movies/movies.module';
+import { PeopleModule } from './people/people.module';
+import { ProductionCompaniesModule } from './production-companies/production-companies.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { MoviesModule } from './movies/movies.module';
     Neo4jModule.fromEnv(),
     AuthModule,
     MoviesModule,
+    PeopleModule,
+    ProductionCompaniesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
