@@ -1,5 +1,5 @@
 import { Module, OnModuleInit } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Neo4jModule, Neo4jService } from 'nest-neo4j/dist';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { MoviesModule } from './movies/movies.module';
 import { PeopleModule } from './people/people.module';
 import { ProductionCompaniesModule } from './production-companies/production-companies.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,10 +23,21 @@ import { ProductionCompaniesModule } from './production-companies/production-com
       cors: {
         credentials: true,
         methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE'],
-        origin: process.env.ALLOWED_ORIGINS.split(",")
+        origin: process.env.ALLOWED_ORIGINS?.split(",") ?? [],
       },
     }),
     Neo4jModule.fromEnv(),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN'),
+        },
+      })
+    }),
     AuthModule,
     MoviesModule,
     PeopleModule,
