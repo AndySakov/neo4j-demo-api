@@ -18,6 +18,11 @@ import { ProductionCompaniesModule } from './production-companies/production-com
       debug: process.env.NODE_ENV === "development",
       playground: true,
       autoSchemaFile: true,
+      cors: {
+        credentials: true,
+        methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE'],
+        origin: process.env.ALLOWED_ORIGINS.split(",")
+      },
     }),
     Neo4jModule.fromEnv(),
     AuthModule,
@@ -34,8 +39,8 @@ export class AppModule implements OnModuleInit {
 
   onModuleInit() {
     return Promise.all([
-      this.neo4jService.write('CREATE CONSTRAINT unique_id IF NOT EXISTS FOR (u:User) REQUIRE u.id IS UNIQUE').catch(e => {}),
-      this.neo4jService.write('CREATE CONSTRAINT unique_email IF NOT EXISTS FOR (u:User) REQUIRE u.email IS UNIQUE').catch(e => {}),
+      this.neo4jService.write('CREATE CONSTRAINT unique_id IF NOT EXISTS FOR (u:User) REQUIRE u.id IS UNIQUE').catch(e => { }),
+      this.neo4jService.write('CREATE CONSTRAINT unique_email IF NOT EXISTS FOR (u:User) REQUIRE u.email IS UNIQUE').catch(e => { }),
     ])
   }
 }
