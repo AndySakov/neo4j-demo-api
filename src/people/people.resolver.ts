@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { PeopleService } from './people.service';
 import { Person } from './entities/person.entity';
 import { CreatePersonInput } from './dto/create-person.input';
@@ -7,6 +7,9 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql.auth-guard';
 import { PersonProperties } from './interfaces/person-properties.interface';
 import { Response } from '../common/response.entity';
+import { AddMovieDirectedInput } from './dto/add-movie-directed.input';
+import { AddMovieStarredInInput } from './dto/add-movie-starred-in.input';
+import { MovieProperties } from 'src/movies/interfaces/movie-properties.interface';
 
 @Resolver(() => Person)
 export class PeopleResolver {
@@ -40,5 +43,29 @@ export class PeopleResolver {
   @Mutation(() => Response)
   removePerson(@Args('id') id: string): Promise<{ success: boolean, message: string }> {
     return this.peopleService.remove(id);
+  }
+
+  @ResolveField()
+  moviesDirected(@Parent() person: Person): Promise<MovieProperties[]> {
+    const { id } = person;
+    return this.peopleService.getMoviesDirected(id).then((movies) => movies.map((movie) => movie.toJson()));
+  }
+
+  @ResolveField()
+  moviesStarredIn(@Parent() person: Person): Promise<MovieProperties[]> {
+    const { id } = person;
+    return this.peopleService.getMoviesStarredIn(id).then((movies) => movies.map((movie) => movie.toJson()));
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Person)
+  addMovieDirected(@Args('addMovieDirectedInput') addMovieDirectedInput: AddMovieDirectedInput): Promise<PersonProperties> {
+    return this.peopleService.addMovieDirected(addMovieDirectedInput).then((person) => person.toJson());
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Person)
+  addMovieStarredIn(@Args('addMovieStarredInInput') addMovieStarredInInput: AddMovieStarredInInput): Promise<PersonProperties> {
+    return this.peopleService.addMovieStarredIn(addMovieStarredInInput).then((person) => person.toJson());
   }
 }

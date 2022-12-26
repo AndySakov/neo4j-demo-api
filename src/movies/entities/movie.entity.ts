@@ -1,5 +1,8 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Node } from 'neo4j-driver';
+import { People } from 'src/common/common.types';
+import { Person } from 'src/people/entities/person.entity';
+import { ProductionCompany } from 'src/production-companies/entities/production-company.entity';
 import { MovieProperties } from '../interfaces/movie-properties.interface';
 
 @ObjectType()
@@ -18,6 +21,15 @@ export class Movie {
 
   @Field({ description: 'Popular phrase associated with this movie' })
   tagline: string;
+
+  @Field(() => [Person], { description: 'Actors starring in this movie', nullable: true })
+  cast: People;
+
+  @Field(() => [Person], { description: 'Directors of this movie', nullable: true })
+  directors: People;
+
+  @Field(() => [ProductionCompany], { description: 'Production companies associated with this movie', nullable: true })
+  producedBy: ProductionCompany[];
 
   toJson(): MovieProperties {
     return <Record<string, any>>this.node.properties as MovieProperties

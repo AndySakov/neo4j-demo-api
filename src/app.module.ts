@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Neo4jModule, Neo4jService } from 'nest-neo4j/dist';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
-import { AppController } from './app.controller';
+import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { MoviesModule } from './movies/movies.module';
@@ -43,8 +43,7 @@ import { JwtModule } from '@nestjs/jwt';
     PeopleModule,
     ProductionCompaniesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [AppResolver, AppService],
 })
 export class AppModule implements OnModuleInit {
 

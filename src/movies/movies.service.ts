@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Neo4jService } from 'nest-neo4j/dist';
+import { People } from 'src/common/common.types';
+import { Person } from 'src/people/entities/person.entity';
+import { ProductionCompany } from 'src/production-companies/entities/production-company.entity';
 import { CreateMovieInput } from './dto/create-movie.input';
 import { UpdateMovieInput } from './dto/update-movie.input';
 import { Movie } from './entities/movie.entity';
@@ -39,7 +42,7 @@ export class MoviesService {
             MATCH (m:Movie {id: $id })
             SET m += $properties
             RETURN m
-        `, { id: id, properties: properties })
+        `, { id, properties })
       .then(res => new Movie(res.records[0].get('m')))
   }
 
@@ -49,5 +52,29 @@ export class MoviesService {
             DETACH DELETE m
         `, { id })
       .then(res => res.records ? { success: true, message: `Record with id ${id} removed successfully` } : { success: false, message: `Record with id ${id} not found` })
+  }
+
+  getCast(id: string): Promise<People> {
+    return this.neo4jService.read(`
+            MATCH (p:Person) -[:ACTED_IN]-> (:Movie {id: $id})
+            RETURN p
+        `, { id })
+      .then(res => res.records.map((record) => new Person(record.get('p'))))
+  }
+
+  getDirectors(id: string): Promise<People> {
+    return this.neo4jService.read(`
+            MATCH (p:Person) -[:DIRECTED]-> (:Movie {id: $id})
+            RETURN p
+        `, { id })
+      .then(res => res.records.map((record) => new Person(record.get('p'))))
+  }
+
+  getProductionCompanies(id: string): Promise<ProductionCompany[]> {
+    return this.neo4jService.read(`
+            MATCH (pc:ProductionCompany) -[:PRODUCED]-> (:Movie {id: $id})
+            RETURN pc
+        `, { id })
+      .then(res => res.records.map((record) => new ProductionCompany(record.get('pc'))))
   }
 }
